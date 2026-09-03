@@ -9,8 +9,10 @@ more — rendered from an actual execution trace, not a scripted animation.
 
 ## Status
 
-Phase 01: project foundation. The application shell runs, but there is no
-code editor or execution engine yet — those land in later phases. See
+Phase 03: Python execution engine. You can write or pick a DSA example,
+run it, and see a real execution trace produced by CPython (via Pyodide) —
+not a scripted animation. Step-by-step debugging UI, variable/array/call
+stack visualizations, and other languages land in later phases. See
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall design and
 [CONTRIBUTING.md](CONTRIBUTING.md) for the phased development process.
 
