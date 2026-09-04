@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { CodeEditor } from './CodeEditor'
+import { DebuggerControls } from './DebuggerControls'
 import { EditorToolbar } from './EditorToolbar'
 import { TraceSummary } from './TraceSummary'
 import { EXAMPLES } from '../lib/examples'
 import type { Language } from '../lib/languages'
 import { runCode } from '../engine/runEngine'
 import type { ExecutionTrace } from '../engine/trace'
+import { useExecutionController } from '../hooks/useExecutionController'
 
 type RunStatus = 'idle' | 'running' | 'done' | 'failed'
 
@@ -17,6 +19,7 @@ export function Workspace() {
   const [status, setStatus] = useState<RunStatus>('idle')
   const [trace, setTrace] = useState<ExecutionTrace | null>(null)
   const [runError, setRunError] = useState<string | null>(null)
+  const controller = useExecutionController(trace)
 
   function selectExample(id: string) {
     const next = EXAMPLES.find((e) => e.id === id) ?? EXAMPLES[0]
@@ -39,6 +42,7 @@ export function Workspace() {
   async function run() {
     setStatus('running')
     setRunError(null)
+    setTrace(null)
     try {
       const result = await runCode(language, code)
       setTrace(result)
@@ -62,12 +66,23 @@ export function Workspace() {
           onReset={reset}
         />
         <div className="min-h-0 flex-1">
-          <CodeEditor language={language} value={code} onChange={setCode} />
+          <CodeEditor
+            language={language}
+            value={code}
+            onChange={setCode}
+            highlightLine={controller.currentStep?.lineNumber}
+          />
         </div>
       </section>
       <section className="flex min-w-0 flex-1 flex-col">
         <PaneHeader label="Visualization" />
-        <TraceSummary status={status} trace={trace} runError={runError} />
+        <DebuggerControls {...controller} />
+        <TraceSummary
+          status={status}
+          trace={trace}
+          runError={runError}
+          currentStep={controller.currentStep}
+        />
       </section>
     </main>
   )

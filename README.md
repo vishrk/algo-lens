@@ -9,12 +9,13 @@ more — rendered from an actual execution trace, not a scripted animation.
 
 ## Status
 
-Phase 03: Python execution engine. You can write or pick a DSA example,
-run it, and see a real execution trace produced by CPython (via Pyodide) —
-not a scripted animation. Step-by-step debugging UI, variable/array/call
-stack visualizations, and other languages land in later phases. See
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall design and
-[CONTRIBUTING.md](CONTRIBUTING.md) for the phased development process.
+Phase 04: step-by-step debugger. Run a Python example, then step through
+its real execution trace with Reset/Previous/Step/Continue/Pause and a
+speed control — the active line highlights in the editor as you go.
+Variable/array/call-stack visualizations and other languages land in later
+phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall
+design and [CONTRIBUTING.md](CONTRIBUTING.md) for the phased development
+process.
 
 ## Getting started
 

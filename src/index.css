@@ -14,3 +14,13 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
 }
+
+.current-line-highlight {
+  background-color: rgba(88, 166, 255, 0.15);
+}
+
+.current-line-marker {
+  background-color: var(--color-accent);
+  width: 3px !important;
+  margin-left: 3px;
+}

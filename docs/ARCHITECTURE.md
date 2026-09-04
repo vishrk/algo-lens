@@ -54,7 +54,7 @@ ExecutionTrace (src/engine/trace.ts) — language-agnostic
     v
 runCode() (src/engine/runEngine.ts) — language dispatcher
     v
-UI (currently TraceSummary; full step debugger lands in Phase 04)
+UI: an ExecutionController cursor over trace.steps, driving the debugger
 ```
 
 Because the engine runs in a Web Worker, a slow or looping user program
@@ -72,6 +72,29 @@ A step cap (`MAX_STEPS` in tracer.py) prevents a runaway loop from producing
 an unbounded trace. Full timeout/error UX is Phase 16's job — this is just
 the minimum needed so a bug in user code can't wedge the worker forever.
 
+### The step-by-step debugger (Phase 04)
+
+`ExecutionTrace.steps` is an immutable array — every step already exists
+once a run finishes. Stepping through it is therefore just moving a cursor,
+never re-running anything:
+
+```
+ExecutionTrace.steps[]  (immutable, produced once by the engine)
+    v
+useExecutionController(trace)   src/hooks/useExecutionController.ts
+    - stepIndex: number (cursor into steps[])
+    - Reset / Previous / Step / Continue / Pause / speed
+    v
+DebuggerControls   renders the cursor's controls + "Step N / M"
+CodeEditor          highlights steps[stepIndex].lineNumber via a Monaco decoration
+TraceSummary        shows the current step's line/event/call-path
+```
+
+`useExecutionController` owns no knowledge of Python, or of what a
+"variable" or "array" is — it only knows how to move an index around an
+array of steps. This keeps it reusable once Phase 05+ visualizers need the
+same current-step cursor.
+
 ## Project structure
 
 ```
@@ -85,6 +108,8 @@ src/
       tracer.py             sys.settrace-based tracer (runs inside Pyodide)
       pyodide.worker.ts     Web Worker: loads Pyodide, runs tracer.py
       runPython.ts           main-thread Worker wrapper, returns an ExecutionTrace
+  hooks/
+    useExecutionController.ts   cursor over trace.steps (Reset/Previous/Step/Continue/Pause)
   lib/            language + DSA example data
   test/           test setup
   App.tsx         app shell
