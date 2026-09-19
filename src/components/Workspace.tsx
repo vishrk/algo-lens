@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ArrayVisualizer } from './ArrayVisualizer'
 import { CodeEditor } from './CodeEditor'
 import { DebuggerControls } from './DebuggerControls'
 import { EditorToolbar } from './EditorToolbar'
@@ -78,6 +79,10 @@ export function Workspace() {
       <section className="flex min-w-0 flex-1 flex-col">
         <PaneHeader label="Visualization" />
         <DebuggerControls {...controller} />
+        <ArrayVisualizer
+          state={controller.currentStep?.state ?? null}
+          previousState={controller.previousStep?.state ?? null}
+        />
         <div className="flex min-h-0 flex-1">
           <TraceSummary
             status={status}

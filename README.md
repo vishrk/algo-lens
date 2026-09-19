@@ -9,13 +9,14 @@ more — rendered from an actual execution trace, not a scripted animation.
 
 ## Status
 
-Phase 05: variable state visualization. Step through a real execution
-trace and watch a Variables panel update live — locals and globals with
-their type, and changed variables highlighted with their previous value.
-Array/call-stack/recursion visualizations and other languages land in
-later phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the
-overall design and [CONTRIBUTING.md](CONTRIBUTING.md) for the phased
-development process.
+Phase 06: array/list visualizer. Step through binary search, Two Sum, or
+your own code and watch list variables render as indexed boxes, with
+pointer variables like `left`/`mid`/`right` (or any int that happens to be
+a valid index) arrowed in underneath, and changed cells highlighted.
+Call-stack/recursion visualizations and other languages land in later
+phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall
+design and [CONTRIBUTING.md](CONTRIBUTING.md) for the phased development
+process.
 
 ## Getting started
 

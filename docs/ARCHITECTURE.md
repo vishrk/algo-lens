@@ -117,23 +117,52 @@ it has no special-casing for Two Sum, binary search, or any other problem:
 Because this reads from `ExecutionStep.state`, the same shape produced by
 any future language engine, it never needs to know Python exists.
 
+### The array/list visualizer (Phase 06)
+
+`src/engine/arrayVariables.ts` finds array-like state the same way the
+Variables panel finds scope, with no per-problem logic:
+
+- A **list variable** is any `VariableValue` with `kind: 'list'` in the
+  active scope (locals shadowing globals, same rule as the Variables panel).
+- A **pointer** is detected generically: any `int`-typed variable in the
+  same scope whose value happens to fall within `[0, length)` for that
+  array. Nothing hardcodes names like `left`, `mid`, or `i` — a variable
+  called `banana` would be shown as a pointer if its value were a valid
+  index. This is a heuristic, not a data-flow analysis, so an unrelated
+  int that happens to land in range will also show up as a pointer.
+- A **changed cell** is a per-index diff between the current and previous
+  step's array contents — this is what "writes" show up as. A **length
+  change** is flagged the same way, without guessing which index was
+  inserted or removed.
+- There is deliberately no "read" highlighting: the tracer only captures
+  line/call/return/exception events, not sub-expression evaluation, so
+  AlgoLens has no real signal for "this index was read" without deeper
+  instrumentation. Rather than fake one, Phase 06 only shows what the
+  trace actually proves happened.
+
+`ArrayVisualizer.tsx` renders each detected array as indexed boxes with
+pointer labels underneath — purely a function of `ExecutionState`, so it
+works for any language engine that produces one.
+
 ## Project structure
 
 ```
 src/
-  components/   UI components
+  components/
+    VariablesPanel.tsx        generic locals/globals view with change highlighting
+    ArrayVisualizer.tsx        indexed boxes + detected pointers for list variables
   engine/
     trace.ts              generic ExecutionTrace/ExecutionStep model
+    values.ts               shared VariableValue structural-equality check
     runEngine.ts           language -> engine dispatcher
     formatValue.ts          VariableValue -> display string
+    arrayVariables.ts        finds list variables + generic index pointers
     python/
       tracer.py             sys.settrace-based tracer (runs inside Pyodide)
       pyodide.worker.ts     Web Worker: loads Pyodide, runs tracer.py
       runPython.ts           main-thread Worker wrapper, returns an ExecutionTrace
   hooks/
     useExecutionController.ts   cursor over trace.steps (Reset/Previous/Step/Continue/Pause)
-  components/
-    VariablesPanel.tsx           generic locals/globals view with change highlighting
   lib/            language + DSA example data
   test/           test setup
   App.tsx         app shell

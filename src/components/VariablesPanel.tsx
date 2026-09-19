@@ -1,5 +1,6 @@
 import { formatValue } from '../engine/formatValue'
 import type { ExecutionStep, VariableValue } from '../engine/trace'
+import { valuesEqual } from '../engine/values'
 
 interface VariablesPanelProps {
   currentStep: ExecutionStep | null
@@ -11,10 +12,6 @@ interface VariableRow {
   value: VariableValue
   previousValue?: VariableValue
   changed: boolean
-}
-
-function valuesEqual(a: VariableValue, b: VariableValue): boolean {
-  return JSON.stringify(a) === JSON.stringify(b)
 }
 
 function buildRows(
