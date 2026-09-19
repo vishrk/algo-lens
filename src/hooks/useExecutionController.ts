@@ -7,6 +7,7 @@ export interface ExecutionController {
   stepIndex: number
   totalSteps: number
   currentStep: ExecutionStep | null
+  previousStep: ExecutionStep | null
   isPlaying: boolean
   speed: PlaybackSpeed
   canStepBack: boolean
@@ -60,6 +61,7 @@ export function useExecutionController(
     stepIndex,
     totalSteps: steps.length,
     currentStep: stepIndex >= 0 ? (steps[stepIndex] ?? null) : null,
+    previousStep: stepIndex > 0 ? (steps[stepIndex - 1] ?? null) : null,
     isPlaying,
     speed,
     canStepBack: stepIndex > 0,

@@ -95,6 +95,28 @@ TraceSummary        shows the current step's line/event/call-path
 array of steps. This keeps it reusable once Phase 05+ visualizers need the
 same current-step cursor.
 
+### The Variables panel (Phase 05)
+
+`src/components/VariablesPanel.tsx` renders `currentStep.state` generically —
+it has no special-casing for Two Sum, binary search, or any other problem:
+
+- **Scope**: the innermost stack frame's `locals` are shown as "Locals —
+  `<functionName>`"; `state.globals` are always shown as "Globals". At
+  module scope CPython's frame locals *are* its globals (the same dict),
+  so the Locals section is skipped there to avoid showing the same
+  variables twice under two labels.
+- **Changed-variable highlighting**: each row is compared against the same
+  name in the equivalent scope of `previousStep` (`stepIndex - 1`) via a
+  structural equality check on the already-JSON-safe `VariableValue`. A
+  variable that's new (didn't exist a step ago) or whose value differs is
+  highlighted, with its previous value shown underneath.
+- **Type**: each `VariableValue` already carries its Python type name
+  (`int`, `list`, `dict`, ...) from `tracer.py`'s serializer, so the panel
+  just displays it — no inference needed on the JS side.
+
+Because this reads from `ExecutionStep.state`, the same shape produced by
+any future language engine, it never needs to know Python exists.
+
 ## Project structure
 
 ```
@@ -110,6 +132,8 @@ src/
       runPython.ts           main-thread Worker wrapper, returns an ExecutionTrace
   hooks/
     useExecutionController.ts   cursor over trace.steps (Reset/Previous/Step/Continue/Pause)
+  components/
+    VariablesPanel.tsx           generic locals/globals view with change highlighting
   lib/            language + DSA example data
   test/           test setup
   App.tsx         app shell

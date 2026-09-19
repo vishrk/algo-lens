@@ -9,13 +9,13 @@ more — rendered from an actual execution trace, not a scripted animation.
 
 ## Status
 
-Phase 04: step-by-step debugger. Run a Python example, then step through
-its real execution trace with Reset/Previous/Step/Continue/Pause and a
-speed control — the active line highlights in the editor as you go.
-Variable/array/call-stack visualizations and other languages land in later
-phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall
-design and [CONTRIBUTING.md](CONTRIBUTING.md) for the phased development
-process.
+Phase 05: variable state visualization. Step through a real execution
+trace and watch a Variables panel update live — locals and globals with
+their type, and changed variables highlighted with their previous value.
+Array/call-stack/recursion visualizations and other languages land in
+later phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the
+overall design and [CONTRIBUTING.md](CONTRIBUTING.md) for the phased
+development process.
 
 ## Getting started
 

@@ -3,6 +3,7 @@ import { CodeEditor } from './CodeEditor'
 import { DebuggerControls } from './DebuggerControls'
 import { EditorToolbar } from './EditorToolbar'
 import { TraceSummary } from './TraceSummary'
+import { VariablesPanel } from './VariablesPanel'
 import { EXAMPLES } from '../lib/examples'
 import type { Language } from '../lib/languages'
 import { runCode } from '../engine/runEngine'
@@ -77,12 +78,18 @@ export function Workspace() {
       <section className="flex min-w-0 flex-1 flex-col">
         <PaneHeader label="Visualization" />
         <DebuggerControls {...controller} />
-        <TraceSummary
-          status={status}
-          trace={trace}
-          runError={runError}
-          currentStep={controller.currentStep}
-        />
+        <div className="flex min-h-0 flex-1">
+          <TraceSummary
+            status={status}
+            trace={trace}
+            runError={runError}
+            currentStep={controller.currentStep}
+          />
+          <VariablesPanel
+            currentStep={controller.currentStep}
+            previousStep={controller.previousStep}
+          />
+        </div>
       </section>
     </main>
   )

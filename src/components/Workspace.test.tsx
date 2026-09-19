@@ -11,6 +11,7 @@ vi.mock('../engine/runEngine', () => ({
 
 describe('Workspace', () => {
   it('shows the trace summary after Run resolves', async () => {
+    const globals = { z: { kind: 'primitive' as const, type: 'int', value: 30 } }
     const trace: ExecutionTrace = {
       language: 'python',
       steps: [
@@ -18,15 +19,11 @@ describe('Workspace', () => {
           stepNumber: 1,
           lineNumber: 1,
           eventType: 'line',
-          state: { lineNumber: 1, stack: [], globals: {} },
+          state: { lineNumber: 1, stack: [], globals },
         },
       ],
       stdout: '30\n',
-      finalState: {
-        lineNumber: 1,
-        stack: [],
-        globals: { z: { kind: 'primitive', type: 'int', value: 30 } },
-      },
+      finalState: { lineNumber: 1, stack: [], globals },
     }
     vi.mocked(runCode).mockResolvedValue(trace)
 

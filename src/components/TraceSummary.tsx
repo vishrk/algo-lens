@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react'
-import { formatValue } from '../engine/formatValue'
 import type { ExecutionStep, ExecutionTrace } from '../engine/trace'
 
 interface TraceSummaryProps {
@@ -23,10 +22,8 @@ export function TraceSummary({ status, trace, runError, currentStep }: TraceSumm
     return null
   }
 
-  const finalGlobals = trace.finalState ? Object.entries(trace.finalState.globals) : []
-
   return (
-    <div className="flex-1 overflow-auto p-4 font-mono text-sm text-text">
+    <div className="min-w-0 flex-1 overflow-auto border-r border-border p-4 font-mono text-sm text-text">
       <p className="text-text-dim">
         {trace.steps.length} execution step{trace.steps.length === 1 ? '' : 's'} recorded
       </p>
@@ -54,20 +51,6 @@ export function TraceSummary({ status, trace, runError, currentStep }: TraceSumm
         </div>
       )}
 
-      {finalGlobals.length > 0 && (
-        <div className="mt-3">
-          <p className="text-xs uppercase tracking-wide text-text-dim">
-            final variables
-          </p>
-          <ul className="mt-1 space-y-0.5">
-            {finalGlobals.map(([name, value]) => (
-              <li key={name}>
-                <span className="text-accent">{name}</span> = {formatValue(value)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   )
 }
@@ -80,7 +63,9 @@ function Centered({
   className?: string
 }) {
   return (
-    <div className={`flex flex-1 items-center justify-center text-sm text-text-dim ${className}`}>
+    <div
+      className={`flex min-w-0 flex-1 items-center justify-center border-r border-border text-sm text-text-dim ${className}`}
+    >
       {children}
     </div>
   )
