@@ -9,14 +9,13 @@ more — rendered from an actual execution trace, not a scripted animation.
 
 ## Status
 
-Phase 06: array/list visualizer. Step through binary search, Two Sum, or
-your own code and watch list variables render as indexed boxes, with
-pointer variables like `left`/`mid`/`right` (or any int that happens to be
-a valid index) arrowed in underneath, and changed cells highlighted.
-Call-stack/recursion visualizations and other languages land in later
-phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall
-design and [CONTRIBUTING.md](CONTRIBUTING.md) for the phased development
-process.
+Phase 07: functions and call stack. The Visualization pane now shows the
+real call stack — every active function frame, top-down, with its own
+locals, labeled as entered/running/returned (with the actual return
+value) as you step. Recursion-specific views and other languages land in
+later phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the
+overall design and [CONTRIBUTING.md](CONTRIBUTING.md) for the phased
+development process.
 
 ## Getting started
 

@@ -144,6 +144,29 @@ Variables panel finds scope, with no per-problem logic:
 pointer labels underneath — purely a function of `ExecutionState`, so it
 works for any language engine that produces one.
 
+### The call stack (Phase 07)
+
+`ExecutionState.stack` — already built by `tracer.py` for every step and
+already used by the Variables/Array panels to find "the current scope" —
+*is* the real call stack. Phase 07 just renders it directly, top-down
+(innermost frame first, reversing the outermost-first order the tracer
+stores it in), instead of introducing a new data source:
+
+- **Function entry / execution / return** aren't separate concepts to
+  model — they're exactly `ExecutionStep.eventType` (`call` / `line` /
+  `return`) applied to the innermost frame, so `CallStackPanel.tsx` just
+  labels that frame with the current step's real event.
+- **Return value**: on a `return` step, `ExecutionStep.returnValue` is
+  already the real value CPython's trace function received — shown next
+  to the frame that's returning.
+- **Per-frame locals**: every frame in the stack carries its own
+  `locals`, not just the innermost one, so nested calls show each
+  caller's variables as they were left, not just the active frame's.
+
+`CallStackPanel.tsx` takes only `currentStep` and touches no other
+component's state — the call stack, the array view, and the variables
+view are three independent renderings of the same `ExecutionStep.state`.
+
 ## Project structure
 
 ```
@@ -151,6 +174,7 @@ src/
   components/
     VariablesPanel.tsx        generic locals/globals view with change highlighting
     ArrayVisualizer.tsx        indexed boxes + detected pointers for list variables
+    CallStackPanel.tsx          renders ExecutionState.stack top-down with per-frame locals
   engine/
     trace.ts              generic ExecutionTrace/ExecutionStep model
     values.ts               shared VariableValue structural-equality check

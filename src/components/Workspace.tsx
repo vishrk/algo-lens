@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ArrayVisualizer } from './ArrayVisualizer'
+import { CallStackPanel } from './CallStackPanel'
 import { CodeEditor } from './CodeEditor'
 import { DebuggerControls } from './DebuggerControls'
 import { EditorToolbar } from './EditorToolbar'
@@ -94,6 +95,7 @@ export function Workspace() {
             currentStep={controller.currentStep}
             previousStep={controller.previousStep}
           />
+          <CallStackPanel currentStep={controller.currentStep} />
         </div>
       </section>
     </main>
