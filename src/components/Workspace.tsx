@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ArrayVisualizer } from './ArrayVisualizer'
 import { CallStackPanel } from './CallStackPanel'
+import { CallTreeView } from './CallTreeView'
 import { CodeEditor } from './CodeEditor'
 import { DebuggerControls } from './DebuggerControls'
 import { EditorToolbar } from './EditorToolbar'
@@ -84,6 +85,7 @@ export function Workspace() {
           state={controller.currentStep?.state ?? null}
           previousState={controller.previousStep?.state ?? null}
         />
+        {trace && <CallTreeView steps={trace.steps} stepIndex={controller.stepIndex} />}
         <div className="flex min-h-0 flex-1">
           <TraceSummary
             status={status}

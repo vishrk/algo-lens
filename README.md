@@ -9,13 +9,13 @@ more — rendered from an actual execution trace, not a scripted animation.
 
 ## Status
 
-Phase 07: functions and call stack. The Visualization pane now shows the
-real call stack — every active function frame, top-down, with its own
-locals, labeled as entered/running/returned (with the actual return
-value) as you step. Recursion-specific views and other languages land in
-later phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the
-overall design and [CONTRIBUTING.md](CONTRIBUTING.md) for the phased
-development process.
+Phase 08: recursion. Run Fibonacci or Factorial and see the full call
+tree — every recursive call, its arguments, its return value, and the
+parent-child relationship between calls — with the currently active call
+highlighted as you step. Other languages and non-integer data structures
+(trees, graphs) land in later phases. See
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall design and
+[CONTRIBUTING.md](CONTRIBUTING.md) for the phased development process.
 
 ## Getting started
 

@@ -167,6 +167,34 @@ stores it in), instead of introducing a new data source:
 component's state — the call stack, the array view, and the variables
 view are three independent renderings of the same `ExecutionStep.state`.
 
+### Recursion and the call tree (Phase 08)
+
+The call stack (Phase 07) only shows the *current* path from the outermost
+frame to whatever's executing right now — for recursion, that hides every
+sibling call that already returned (e.g. `fib(3)`'s subtree while you're
+inside `fib(4)`'s). `src/engine/callTree.ts` reconstructs the *entire* call
+tree — including finished calls — by replaying `trace.steps` once:
+
+- A `call` event pushes a new node under whichever node is currently open
+  (or as a new root if none is); a `return` event pops it and records its
+  real `returnValue`. This is exactly how a real call stack nests — no
+  special-casing for recursion, self-calls, or any function name. The
+  same code produces a trivial one-node tree for a non-recursive call and
+  a deep branching tree for `fib`.
+- Because the trace is already complete before stepping begins (Phase 03's
+  engine runs the whole program up front), the *entire* tree is knowable
+  immediately — `CallTreeView` doesn't need to "grow" the tree as you
+  step. Stepping only moves which node is highlighted as active
+  (`findActiveNodeId`, the deepest node whose `[startStep, endStep]` span
+  contains the current step index).
+- The view is skipped entirely when there's only one call in the whole
+  trace (`countNodes(roots) <= 1`) — a single flat call adds nothing the
+  Call Stack panel doesn't already show, so it's not rendered as clutter.
+
+Two new examples, Fibonacci and Factorial, exercise this — both are pure
+integer recursion, so they render fully with the existing Variables/Array/
+Call-Stack panels without needing tree- or graph-shaped data (Phases 10–11).
+
 ## Project structure
 
 ```
@@ -175,9 +203,11 @@ src/
     VariablesPanel.tsx        generic locals/globals view with change highlighting
     ArrayVisualizer.tsx        indexed boxes + detected pointers for list variables
     CallStackPanel.tsx          renders ExecutionState.stack top-down with per-frame locals
+    CallTreeView.tsx             full call/recursion tree from the whole trace
   engine/
     trace.ts              generic ExecutionTrace/ExecutionStep model
     values.ts               shared VariableValue structural-equality check
+    callTree.ts              rebuilds the full call tree from call/return events
     runEngine.ts           language -> engine dispatcher
     formatValue.ts          VariableValue -> display string
     arrayVariables.ts        finds list variables + generic index pointers

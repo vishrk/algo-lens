@@ -196,4 +196,68 @@ while (newHead) {
 `,
     },
   },
+  {
+    id: 'fibonacci',
+    title: 'Fibonacci (recursive)',
+    code: {
+      python: `def fib(n):
+    if n <= 1:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+
+print(fib(5))
+`,
+      javascript: `function fib(n) {
+  if (n <= 1) {
+    return n;
+  }
+  return fib(n - 1) + fib(n - 2);
+}
+
+console.log(fib(5));
+`,
+      typescript: `function fib(n: number): number {
+  if (n <= 1) {
+    return n;
+  }
+  return fib(n - 1) + fib(n - 2);
+}
+
+console.log(fib(5));
+`,
+    },
+  },
+  {
+    id: 'factorial',
+    title: 'Factorial (recursive)',
+    code: {
+      python: `def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+
+print(factorial(5))
+`,
+      javascript: `function factorial(n) {
+  if (n <= 1) {
+    return 1;
+  }
+  return n * factorial(n - 1);
+}
+
+console.log(factorial(5));
+`,
+      typescript: `function factorial(n: number): number {
+  if (n <= 1) {
+    return 1;
+  }
+  return n * factorial(n - 1);
+}
+
+console.log(factorial(5));
+`,
+    },
+  },
 ]
