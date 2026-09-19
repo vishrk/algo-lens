@@ -197,6 +197,198 @@ while (newHead) {
     },
   },
   {
+    id: 'merge-two-sorted-lists',
+    title: 'Merge Two Sorted Lists',
+    code: {
+      python: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+def merge_two_lists(l1, l2):
+    dummy = ListNode()
+    tail = dummy
+    while l1 and l2:
+        if l1.val <= l2.val:
+            tail.next = l1
+            l1 = l1.next
+        else:
+            tail.next = l2
+            l2 = l2.next
+        tail = tail.next
+    tail.next = l1 if l1 else l2
+    return dummy.next
+
+
+l1 = ListNode(1, ListNode(3, ListNode(5)))
+l2 = ListNode(2, ListNode(4, ListNode(6)))
+merged = merge_two_lists(l1, l2)
+while merged:
+    print(merged.val)
+    merged = merged.next
+`,
+      javascript: `class ListNode {
+  constructor(val = 0, next = null) {
+    this.val = val;
+    this.next = next;
+  }
+}
+
+function mergeTwoLists(l1, l2) {
+  const dummy = new ListNode();
+  let tail = dummy;
+  while (l1 && l2) {
+    if (l1.val <= l2.val) {
+      tail.next = l1;
+      l1 = l1.next;
+    } else {
+      tail.next = l2;
+      l2 = l2.next;
+    }
+    tail = tail.next;
+  }
+  tail.next = l1 || l2;
+  return dummy.next;
+}
+
+let l1 = new ListNode(1, new ListNode(3, new ListNode(5)));
+let l2 = new ListNode(2, new ListNode(4, new ListNode(6)));
+let merged = mergeTwoLists(l1, l2);
+while (merged) {
+  console.log(merged.val);
+  merged = merged.next;
+}
+`,
+      typescript: `class ListNode {
+  val: number;
+  next: ListNode | null;
+  constructor(val = 0, next: ListNode | null = null) {
+    this.val = val;
+    this.next = next;
+  }
+}
+
+function mergeTwoLists(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+  const dummy = new ListNode();
+  let tail = dummy;
+  while (l1 && l2) {
+    if (l1.val <= l2.val) {
+      tail.next = l1;
+      l1 = l1.next;
+    } else {
+      tail.next = l2;
+      l2 = l2.next;
+    }
+    tail = tail.next;
+  }
+  tail.next = l1 || l2;
+  return dummy.next;
+}
+
+let l1: ListNode | null = new ListNode(1, new ListNode(3, new ListNode(5)));
+let l2: ListNode | null = new ListNode(2, new ListNode(4, new ListNode(6)));
+let merged = mergeTwoLists(l1, l2);
+while (merged) {
+  console.log(merged.val);
+  merged = merged.next;
+}
+`,
+    },
+  },
+  {
+    id: 'detect-cycle',
+    title: 'Detect Cycle',
+    code: {
+      python: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+def has_cycle(head):
+    slow = head
+    fast = head
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow is fast:
+            return True
+    return False
+
+
+a = ListNode(1)
+b = ListNode(2)
+c = ListNode(3)
+a.next = b
+b.next = c
+c.next = a  # creates a cycle
+
+print(has_cycle(a))
+`,
+      javascript: `class ListNode {
+  constructor(val = 0, next = null) {
+    this.val = val;
+    this.next = next;
+  }
+}
+
+function hasCycle(head) {
+  let slow = head;
+  let fast = head;
+  while (fast && fast.next) {
+    slow = slow.next;
+    fast = fast.next.next;
+    if (slow === fast) {
+      return true;
+    }
+  }
+  return false;
+}
+
+const a = new ListNode(1);
+const b = new ListNode(2);
+const c = new ListNode(3);
+a.next = b;
+b.next = c;
+c.next = a; // creates a cycle
+
+console.log(hasCycle(a));
+`,
+      typescript: `class ListNode {
+  val: number;
+  next: ListNode | null;
+  constructor(val = 0, next: ListNode | null = null) {
+    this.val = val;
+    this.next = next;
+  }
+}
+
+function hasCycle(head: ListNode | null): boolean {
+  let slow = head;
+  let fast = head;
+  while (fast && fast.next) {
+    slow = slow!.next;
+    fast = fast.next.next;
+    if (slow === fast) {
+      return true;
+    }
+  }
+  return false;
+}
+
+const a = new ListNode(1);
+const b = new ListNode(2);
+const c = new ListNode(3);
+a.next = b;
+b.next = c;
+c.next = a; // creates a cycle
+
+console.log(hasCycle(a));
+`,
+    },
+  },
+  {
     id: 'fibonacci',
     title: 'Fibonacci (recursive)',
     code: {

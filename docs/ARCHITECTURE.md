@@ -195,6 +195,52 @@ Two new examples, Fibonacci and Factorial, exercise this — both are pure
 integer recursion, so they render fully with the existing Variables/Array/
 Call-Stack panels without needing tree- or graph-shaped data (Phases 10–11).
 
+### Linked lists (Phase 09)
+
+Visualizing a linked list needs the actual `.val`/`.next` structure of a
+user-defined class instance — something the tracer discarded entirely
+before this phase. `_serialize` in `tracer.py` previously turned any custom
+object into an opaque `{"kind": "object", "repr": "<ListNode object at
+0x...>"}`, which threw away everything a list visualizer would need.
+
+This phase makes a small, generic addition to the wire format instead of
+special-casing "ListNode": any instance with a `__dict__` is now serialized
+with its real fields (`attributes`) and a stable identity (`objectId`,
+CPython's `id()`). This has no knowledge of linked lists — it's the same
+treatment `list`/`dict` already got in Phase 03, extended to arbitrary
+class instances, and it directly enables Phase 10/11 (trees, graphs) too.
+
+`src/engine/linkedListVariables.ts` builds on that generically:
+
+- A **pointer field** is any attribute whose value is `None` or another
+  instance of the *same class* — structural, not name-based (works for a
+  field called `next`, `nxt`, or anything else). Exactly one such field
+  means the object is list-like; two (e.g. a tree's `left`/`right`) means
+  it isn't a *singly* linked list, so Phase 09 leaves it alone.
+- **Cycle detection** falls out of `objectId` for free: walking `.next`
+  and re-encountering an already-visited `objectId` is a real cycle, not a
+  guess. When the tracer's own recursion guard already truncated a deeper
+  occurrence during serialization (the `"<circular>"` sentinel), that's
+  recognized as evidence of a cycle too.
+- Multiple variables aliasing the **same physical chain** (`head`, `curr`,
+  `prev` all pointing into one list, common in in-place mutation
+  algorithms) are shown as one visualization with multiple pointer labels,
+  not drawn three times — the same "claim objectIds, then attach stray
+  pointers" pattern `ArrayVisualizer` uses for index pointers.
+- Because each step's state is serialized fresh from the *current* (live,
+  possibly just-mutated) object graph, a list being reversed in place
+  really does show its links changing step by step — nothing is
+  reconstructed from history or guessed.
+
+Three examples exercise this: Reverse Linked List (in-place mutation,
+`head`/`curr`/`prev` sharing one chain), Merge Two Sorted Lists (two
+independent chains visualized side by side), and Detect Cycle (a genuine
+`a → b → c → a` cycle, rendered as `1 → 2 → 3 → ↻ (cycle)`).
+
+The "locals shadow globals" scope-merging logic, previously private to
+`arrayVariables.ts`, moved to `src/engine/scope.ts` (`activeScope`) so
+this phase's new module could reuse it rather than duplicating it again.
+
 ## Project structure
 
 ```
@@ -204,13 +250,16 @@ src/
     ArrayVisualizer.tsx        indexed boxes + detected pointers for list variables
     CallStackPanel.tsx          renders ExecutionState.stack top-down with per-frame locals
     CallTreeView.tsx             full call/recursion tree from the whole trace
+    LinkedListVisualizer.tsx      chains of node boxes with pointer labels
   engine/
     trace.ts              generic ExecutionTrace/ExecutionStep model
+    scope.ts                locals-shadow-globals scope resolution
     values.ts               shared VariableValue structural-equality check
     callTree.ts              rebuilds the full call tree from call/return events
     runEngine.ts           language -> engine dispatcher
     formatValue.ts          VariableValue -> display string
     arrayVariables.ts        finds list variables + generic index pointers
+    linkedListVariables.ts    finds singly-linked chains via objectId/attributes
     python/
       tracer.py             sys.settrace-based tracer (runs inside Pyodide)
       pyodide.worker.ts     Web Worker: loads Pyodide, runs tracer.py

@@ -4,7 +4,19 @@ export type VariableValue =
   | { kind: 'primitive'; type: string; value: string | number | boolean | null }
   | { kind: 'list'; type: string; items: VariableValue[] }
   | { kind: 'dict'; type: string; entries: [VariableValue, VariableValue][] }
-  | { kind: 'object'; type: string; repr: string }
+  | {
+      kind: 'object'
+      type: string
+      repr: string
+      /** Identity of the underlying instance (CPython's id()) — present for
+       *  user-defined class instances, absent for opaque objects (functions,
+       *  modules, ...) and for the "<circular>" sentinel. Lets visualizers
+       *  recognize shared/repeated references, e.g. a linked-list cycle. */
+      objectId?: number
+      /** The instance's real fields, present alongside objectId. Absent for
+       *  opaque objects, which only carry a repr. */
+      attributes?: Record<string, VariableValue>
+    }
 
 export interface StackFrameSnapshot {
   functionName: string

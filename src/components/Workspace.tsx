@@ -5,6 +5,7 @@ import { CallTreeView } from './CallTreeView'
 import { CodeEditor } from './CodeEditor'
 import { DebuggerControls } from './DebuggerControls'
 import { EditorToolbar } from './EditorToolbar'
+import { LinkedListVisualizer } from './LinkedListVisualizer'
 import { TraceSummary } from './TraceSummary'
 import { VariablesPanel } from './VariablesPanel'
 import { EXAMPLES } from '../lib/examples'
@@ -85,6 +86,7 @@ export function Workspace() {
           state={controller.currentStep?.state ?? null}
           previousState={controller.previousStep?.state ?? null}
         />
+        <LinkedListVisualizer state={controller.currentStep?.state ?? null} />
         {trace && <CallTreeView steps={trace.steps} stepIndex={controller.stepIndex} />}
         <div className="flex min-h-0 flex-1">
           <TraceSummary

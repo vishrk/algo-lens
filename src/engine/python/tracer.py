@@ -37,6 +37,26 @@ def _serialize(value, seen=None, depth=0):
         representation = repr(value)
     except Exception:
         representation = "<unrepresentable>"
+
+    # A user-defined class instance (ListNode, TreeNode, ...) — serialize its
+    # real fields instead of just an opaque repr, so structures like linked
+    # lists can be reconstructed generically on the frontend. objectId lets
+    # the frontend recognize when two variables point at the same instance,
+    # or when a chain of .next pointers has looped back on itself.
+    if hasattr(value, "__dict__") and not isinstance(value, type):
+        attributes = {
+            key: _serialize(val, seen, depth + 1)
+            for key, val in vars(value).items()
+            if not key.startswith("__")
+        }
+        return {
+            "kind": "object",
+            "type": type(value).__name__,
+            "repr": representation,
+            "objectId": obj_id,
+            "attributes": attributes,
+        }
+
     return {"kind": "object", "type": type(value).__name__, "repr": representation}
 
 

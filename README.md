@@ -9,11 +9,11 @@ more — rendered from an actual execution trace, not a scripted animation.
 
 ## Status
 
-Phase 08: recursion. Run Fibonacci or Factorial and see the full call
-tree — every recursive call, its arguments, its return value, and the
-parent-child relationship between calls — with the currently active call
-highlighted as you step. Other languages and non-integer data structures
-(trees, graphs) land in later phases. See
+Phase 09: linked lists. Run Reverse Linked List, Merge Two Sorted Lists,
+or Detect Cycle and watch real node chains render as `[1] → [2] → [3] →
+null`, with pointer variables like `head`/`curr`/`prev` labeled at their
+actual position — including a genuine cycle rendered as `↻ (cycle)`.
+Trees, graphs, and other languages land in later phases. See
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall design and
 [CONTRIBUTING.md](CONTRIBUTING.md) for the phased development process.
 

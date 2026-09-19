@@ -1,3 +1,4 @@
+import { activeScope } from './scope'
 import type { ExecutionState, VariableValue } from './trace'
 import { valuesEqual } from './values'
 
@@ -25,15 +26,6 @@ function isIntPrimitive(value: VariableValue): value is PrimitiveValue {
   return value.kind === 'primitive' && value.type === 'int'
 }
 
-/** Locals shadow globals, matching Python scoping — mirrors VariablesPanel's scope. */
-function scopeFor(state: ExecutionState): Record<string, VariableValue> {
-  const frame = state.stack.at(-1)
-  if (frame && frame.functionName !== '<module>') {
-    return { ...state.globals, ...frame.locals }
-  }
-  return state.globals
-}
-
 /**
  * Finds array-like (list) variables in scope and, generically, any integer
  * variable whose value happens to be a valid index into that array — no
@@ -45,8 +37,8 @@ export function extractArrayVariables(
   current: ExecutionState,
   previous?: ExecutionState | null,
 ): ArrayVariable[] {
-  const scope = scopeFor(current)
-  const previousScope = previous ? scopeFor(previous) : undefined
+  const scope = activeScope(current)
+  const previousScope = previous ? activeScope(previous) : undefined
 
   const arrayEntries = Object.entries(scope).filter((entry): entry is [string, ListValue] =>
     isList(entry[1]),

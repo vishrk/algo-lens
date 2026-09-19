@@ -73,4 +73,59 @@ describe('python tracer (real Pyodide execution)', () => {
 
     expect(result.error.type).toBe('SyntaxError')
   })
+
+  it('serializes a custom object instance with its real fields and a stable identity', () => {
+    const result = trace(
+      'class ListNode:\n' +
+        '    def __init__(self, val=0, next=None):\n' +
+        '        self.val = val\n' +
+        '        self.next = next\n\n' +
+        'head = ListNode(1, ListNode(2))\n',
+    )
+
+    expect(result.error).toBeNull()
+    const finalGlobals = result.steps.at(-1).state.globals
+    const head = finalGlobals.head
+
+    expect(head.kind).toBe('object')
+    expect(head.type).toBe('ListNode')
+    expect(typeof head.objectId).toBe('number')
+    expect(head.attributes.val).toEqual({ kind: 'primitive', type: 'int', value: 1 })
+    expect(head.attributes.next.type).toBe('ListNode')
+    expect(head.attributes.next.attributes.val).toEqual({
+      kind: 'primitive',
+      type: 'int',
+      value: 2,
+    })
+    expect(head.attributes.next.attributes.next).toEqual({
+      kind: 'primitive',
+      type: 'NoneType',
+      value: null,
+    })
+  })
+
+  it('truncates a self-referential object cycle instead of recursing forever', () => {
+    const result = trace(
+      'class Node:\n' +
+        '    def __init__(self):\n' +
+        '        self.next = None\n\n' +
+        'a = Node()\n' +
+        'b = Node()\n' +
+        'a.next = b\n' +
+        'b.next = a\n',
+    )
+
+    expect(result.error).toBeNull()
+    const finalGlobals = result.steps.at(-1).state.globals
+    const a = finalGlobals.a
+
+    expect(a.attributes.next.type).toBe('Node')
+    // a -> b -> a: the second occurrence of `a` is truncated to the
+    // circular sentinel rather than serialized again.
+    expect(a.attributes.next.attributes.next).toEqual({
+      kind: 'object',
+      type: 'Node',
+      repr: '<circular>',
+    })
+  })
 })
