@@ -9,13 +9,12 @@ more — rendered from an actual execution trace, not a scripted animation.
 
 ## Status
 
-Phase 10: binary trees. Run an inorder/preorder/postorder traversal, a
-BST search, or maximum depth and watch the real tree — nodes, edges
-labeled `left`/`right`, and the node currently being visited — render as
-you step, including explicit `null` leaves. Graphs and other languages
-land in later phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-for the overall design and [CONTRIBUTING.md](CONTRIBUTING.md) for the
-phased development process.
+Phase 11: graphs. Run BFS, DFS, or Connected Components and watch the
+real adjacency structure — nodes, directed edges, the current node, and
+named collections like `visited`/`queue`/`stack` — render as you step.
+Other languages land in later phases. See
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall design and
+[CONTRIBUTING.md](CONTRIBUTING.md) for the phased development process.
 
 ## Getting started
 

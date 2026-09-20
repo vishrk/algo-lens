@@ -821,4 +821,293 @@ console.log(maxDepth(root));
 `,
     },
   },
+  {
+    id: 'graph-bfs',
+    title: 'Graph BFS',
+    code: {
+      python: `def bfs(graph, start):
+    visited = {start}
+    queue = [start]
+    order = []
+    while queue:
+        node = queue.pop(0)
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    return order
+
+
+graph = {
+    0: [1, 2],
+    1: [0, 3],
+    2: [0, 3],
+    3: [1, 2],
+}
+print(bfs(graph, 0))
+`,
+      javascript: `function bfs(graph, start) {
+  const visited = new Set([start]);
+  const queue = [start];
+  const order = [];
+  while (queue.length > 0) {
+    const node = queue.shift();
+    order.push(node);
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push(neighbor);
+      }
+    }
+  }
+  return order;
+}
+
+const graph = {
+  0: [1, 2],
+  1: [0, 3],
+  2: [0, 3],
+  3: [1, 2],
+};
+console.log(bfs(graph, 0));
+`,
+      typescript: `function bfs(graph: Record<number, number[]>, start: number): number[] {
+  const visited = new Set<number>([start]);
+  const queue = [start];
+  const order: number[] = [];
+  while (queue.length > 0) {
+    const node = queue.shift()!;
+    order.push(node);
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push(neighbor);
+      }
+    }
+  }
+  return order;
+}
+
+const graph: Record<number, number[]> = {
+  0: [1, 2],
+  1: [0, 3],
+  2: [0, 3],
+  3: [1, 2],
+};
+console.log(bfs(graph, 0));
+`,
+    },
+  },
+  {
+    id: 'graph-dfs',
+    title: 'Graph DFS',
+    code: {
+      python: `def dfs(graph, start):
+    visited = set()
+    stack = [start]
+    order = []
+    while stack:
+        node = stack.pop()
+        if node in visited:
+            continue
+        visited.add(node)
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                stack.append(neighbor)
+    return order
+
+
+graph = {
+    0: [1, 2],
+    1: [0, 3],
+    2: [0, 3],
+    3: [1, 2],
+}
+print(dfs(graph, 0))
+`,
+      javascript: `function dfs(graph, start) {
+  const visited = new Set();
+  const stack = [start];
+  const order = [];
+  while (stack.length > 0) {
+    const node = stack.pop();
+    if (visited.has(node)) {
+      continue;
+    }
+    visited.add(node);
+    order.push(node);
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        stack.push(neighbor);
+      }
+    }
+  }
+  return order;
+}
+
+const graph = {
+  0: [1, 2],
+  1: [0, 3],
+  2: [0, 3],
+  3: [1, 2],
+};
+console.log(dfs(graph, 0));
+`,
+      typescript: `function dfs(graph: Record<number, number[]>, start: number): number[] {
+  const visited = new Set<number>();
+  const stack = [start];
+  const order: number[] = [];
+  while (stack.length > 0) {
+    const node = stack.pop()!;
+    if (visited.has(node)) {
+      continue;
+    }
+    visited.add(node);
+    order.push(node);
+    for (const neighbor of graph[node]) {
+      if (!visited.has(neighbor)) {
+        stack.push(neighbor);
+      }
+    }
+  }
+  return order;
+}
+
+const graph: Record<number, number[]> = {
+  0: [1, 2],
+  1: [0, 3],
+  2: [0, 3],
+  3: [1, 2],
+};
+console.log(dfs(graph, 0));
+`,
+    },
+  },
+  {
+    id: 'connected-components',
+    title: 'Connected Components',
+    code: {
+      python: `def dfs_visit(graph, node, visited):
+    stack = [node]
+    while stack:
+        curr = stack.pop()
+        if curr in visited:
+            continue
+        visited.add(curr)
+        for neighbor in graph[curr]:
+            if neighbor not in visited:
+                stack.append(neighbor)
+
+
+def count_components(n, edges):
+    graph = {i: [] for i in range(n)}
+    for a, b in edges:
+        graph[a].append(b)
+        graph[b].append(a)
+
+    visited = set()
+    count = 0
+    for node in range(n):
+        if node not in visited:
+            dfs_visit(graph, node, visited)
+            count += 1
+    return count
+
+
+print(count_components(5, [[0, 1], [1, 2], [3, 4]]))
+`,
+      javascript: `function dfsVisit(graph, node, visited) {
+  const stack = [node];
+  while (stack.length > 0) {
+    const curr = stack.pop();
+    if (visited.has(curr)) {
+      continue;
+    }
+    visited.add(curr);
+    for (const neighbor of graph[curr]) {
+      if (!visited.has(neighbor)) {
+        stack.push(neighbor);
+      }
+    }
+  }
+}
+
+function countComponents(n, edges) {
+  const graph = {};
+  for (let i = 0; i < n; i++) {
+    graph[i] = [];
+  }
+  for (const [a, b] of edges) {
+    graph[a].push(b);
+    graph[b].push(a);
+  }
+
+  const visited = new Set();
+  let count = 0;
+  for (let node = 0; node < n; node++) {
+    if (!visited.has(node)) {
+      dfsVisit(graph, node, visited);
+      count++;
+    }
+  }
+  return count;
+}
+
+console.log(
+  countComponents(5, [
+    [0, 1],
+    [1, 2],
+    [3, 4],
+  ]),
+);
+`,
+      typescript: `function dfsVisit(graph: Record<number, number[]>, node: number, visited: Set<number>): void {
+  const stack = [node];
+  while (stack.length > 0) {
+    const curr = stack.pop()!;
+    if (visited.has(curr)) {
+      continue;
+    }
+    visited.add(curr);
+    for (const neighbor of graph[curr]) {
+      if (!visited.has(neighbor)) {
+        stack.push(neighbor);
+      }
+    }
+  }
+}
+
+function countComponents(n: number, edges: [number, number][]): number {
+  const graph: Record<number, number[]> = {};
+  for (let i = 0; i < n; i++) {
+    graph[i] = [];
+  }
+  for (const [a, b] of edges) {
+    graph[a].push(b);
+    graph[b].push(a);
+  }
+
+  const visited = new Set<number>();
+  let count = 0;
+  for (let node = 0; node < n; node++) {
+    if (!visited.has(node)) {
+      dfsVisit(graph, node, visited);
+      count++;
+    }
+  }
+  return count;
+}
+
+console.log(
+  countComponents(5, [
+    [0, 1],
+    [1, 2],
+    [3, 4],
+  ]),
+);
+`,
+    },
+  },
 ]

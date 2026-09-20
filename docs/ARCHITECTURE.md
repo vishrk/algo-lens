@@ -277,6 +277,57 @@ Five examples exercise this, matching the phase's traversal-order and
 search/depth scenarios: inorder, preorder, and postorder traversal, BST
 search, and maximum depth.
 
+### Graphs (Phase 11)
+
+Graphs in DSA code aren't represented as linked objects with named pointer
+fields the way lists/trees are — they're almost always a plain adjacency
+structure: `{node: [neighbors, ...]}`. That's a completely different shape
+from Phases 09–10, so `src/engine/graphVariables.ts` detects it on its own
+terms rather than reusing `pointerFields.ts`:
+
+- A **graph variable** is any non-empty dict whose every value is a list —
+  an adjacency dict. Node ids are collected from both the keys and every
+  neighbor list (so an isolated node that's only ever referenced, never a
+  key, still counts), and **edges are directed** by construction: each
+  `key → neighbor` pair in the data becomes one edge exactly as stored. An
+  undirected graph that's mirrored both ways (the common Python pattern:
+  `graph[a].append(b); graph[b].append(a)`) simply produces two opposite
+  directed edges — nothing is inferred about "undirected-ness" that the
+  data doesn't already say.
+- Because graph "nodes" are plain ints/strings, not objects, there's no
+  `objectId` to key off like Phases 09–10 do. **"Current node"** is
+  therefore the same coincidence-based heuristic `ArrayVisualizer` already
+  uses for index pointers: any scalar variable whose value equals a known
+  node id. **Visited/queue/stack** are the same idea one level up: any
+  list or set whose *every* element is a known node id is shown as a
+  named collection — labeled with its own real variable name, not
+  guessed at. AlgoLens never decides "this collection is the visited
+  set" — the code's own variable name already says that.
+- One consequence: a list of node ids (`visited`, `queue`, `order`, ...)
+  is *also* genuinely a list variable, so `ArrayVisualizer` renders it too
+  (as indexed boxes, with the same coincidence-based pointer detection).
+  Both views are independently honest — neither is told about the other —
+  so the same data can legitimately appear twice, once as a graph-native
+  collection and once as a generic array. This is a known overlap, not a
+  bug: fixing it would mean coupling two otherwise-independent
+  visualizers to suppress each other, which isn't justified yet.
+- `collections.deque`, common in textbook BFS, isn't serialized as a list
+  by the tracer (it isn't a `list`/`tuple`/`set`/`frozenset`), so it won't
+  be picked up as a collection. The BFS/DFS examples use a plain list
+  instead (`queue.pop(0)` / `list.pop()`), which is equally valid Python
+  and keeps this phase from needing another tracer change.
+- No 2D node-link layout (force-directed or otherwise) is attempted —
+  `GraphVisualizer.tsx` follows the same text-forward style as
+  `CallTreeView`/`TreeVisualizer`: nodes in a row, an edge list, and
+  labeled collections underneath. A real spatial graph layout (e.g. via
+  React Flow, already in the recommended stack) is a reasonable future
+  enhancement but isn't needed to correctly show what the algorithm is
+  doing.
+
+Three examples exercise this: BFS, DFS, and Connected Components (the
+last also demonstrating multiple independent components and a helper
+function called from a loop, visible in the call tree).
+
 ## Project structure
 
 ```
@@ -288,6 +339,7 @@ src/
     CallTreeView.tsx             full call/recursion tree from the whole trace
     LinkedListVisualizer.tsx      chains of node boxes with pointer labels
     TreeVisualizer.tsx             binary tree nodes/edges with pointer labels
+    GraphVisualizer.tsx             adjacency-dict nodes/edges/collections
   engine/
     trace.ts              generic ExecutionTrace/ExecutionStep model
     scope.ts                locals-shadow-globals scope resolution
@@ -299,6 +351,7 @@ src/
     arrayVariables.ts        finds list variables + generic index pointers
     linkedListVariables.ts    finds singly-linked chains via objectId/attributes
     treeVariables.ts          finds binary-tree-shaped objects via objectId/attributes
+    graphVariables.ts          finds adjacency-dict graphs + node/collection pointers
     python/
       tracer.py             sys.settrace-based tracer (runs inside Pyodide)
       pyodide.worker.ts     Web Worker: loads Pyodide, runs tracer.py
