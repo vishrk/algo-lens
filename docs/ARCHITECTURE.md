@@ -241,6 +241,42 @@ The "locals shadow globals" scope-merging logic, previously private to
 `arrayVariables.ts`, moved to `src/engine/scope.ts` (`activeScope`) so
 this phase's new module could reuse it rather than duplicating it again.
 
+### Binary trees (Phase 10)
+
+A tree node and a linked-list node are the same underlying shape — an
+object with fields that point to peer instances or `None` — differing
+only in *how many* such fields there are. `src/engine/pointerFields.ts`
+extracts that shared structural test (`findPointerFields`, moved out of
+`linkedListVariables.ts`) so both phases read it the same way:
+
+- **Exactly one** pointer field ⇒ singly-linked-list-shaped (Phase 09).
+- **Exactly two** ⇒ binary-tree-shaped (Phase 10) — `src/engine/treeVariables.ts`
+  builds the node/edge tree recursively, labeling each edge with the
+  attribute's *real* name (`left`, `right`, or whatever the class calls
+  them) rather than assuming a name.
+- Any other count isn't a shape either phase models (a doubly-linked
+  node's `prev`+`next` also has two fields, but both point back into the
+  *same* one-dimensional chain rather than branching — Phase 10 doesn't
+  attempt to tell those apart, so an actual doubly-linked list would
+  render as a two-field "tree" rather than a list; none of the current
+  examples exercise that case).
+- The same "claim identities, then attach stray pointers" pattern from
+  Phases 06/09 applies here too: a recursive traversal's parameter
+  (`node`) sharing an identity with an already-discovered tree's node is
+  labeled on it rather than drawn as a second tree. Because `activeScope`
+  only exposes the *innermost* frame's locals, that label naturally
+  tracks whichever node the current (innermost) recursive call is
+  visiting — "current node" falls out of the existing per-step call
+  stack rather than needing separate tracking.
+- `TreeVisualizer.tsx` renders nodes/edges as an indented tree (the same
+  visual language `CallTreeView` already established), explicitly
+  showing `null` leaves so a BST search's dead end is visible, not just
+  absent.
+
+Five examples exercise this, matching the phase's traversal-order and
+search/depth scenarios: inorder, preorder, and postorder traversal, BST
+search, and maximum depth.
+
 ## Project structure
 
 ```
@@ -251,15 +287,18 @@ src/
     CallStackPanel.tsx          renders ExecutionState.stack top-down with per-frame locals
     CallTreeView.tsx             full call/recursion tree from the whole trace
     LinkedListVisualizer.tsx      chains of node boxes with pointer labels
+    TreeVisualizer.tsx             binary tree nodes/edges with pointer labels
   engine/
     trace.ts              generic ExecutionTrace/ExecutionStep model
     scope.ts                locals-shadow-globals scope resolution
     values.ts               shared VariableValue structural-equality check
+    pointerFields.ts         shared node/edge structural detection (1 vs 2 fields)
     callTree.ts              rebuilds the full call tree from call/return events
     runEngine.ts           language -> engine dispatcher
     formatValue.ts          VariableValue -> display string
     arrayVariables.ts        finds list variables + generic index pointers
     linkedListVariables.ts    finds singly-linked chains via objectId/attributes
+    treeVariables.ts          finds binary-tree-shaped objects via objectId/attributes
     python/
       tracer.py             sys.settrace-based tracer (runs inside Pyodide)
       pyodide.worker.ts     Web Worker: loads Pyodide, runs tracer.py

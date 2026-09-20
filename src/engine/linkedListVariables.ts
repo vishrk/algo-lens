@@ -1,7 +1,6 @@
+import { findPointerFields, isObjectValue, type ObjectValue } from './pointerFields'
 import { activeScope } from './scope'
 import type { ExecutionState, VariableValue } from './trace'
-
-type ObjectValue = Extract<VariableValue, { kind: 'object' }>
 
 export interface LinkedListPointer {
   name: string
@@ -22,14 +21,6 @@ export interface LinkedListChain {
   pointers: LinkedListPointer[]
 }
 
-function isObject(value: VariableValue): value is ObjectValue {
-  return value.kind === 'object'
-}
-
-function isNullPrimitive(value: VariableValue): boolean {
-  return value.kind === 'primitive' && value.value === null
-}
-
 /**
  * A "next" field is any attribute whose value is either None or another
  * instance of the same class. Exactly one such field means the object is
@@ -38,11 +29,8 @@ function isNullPrimitive(value: VariableValue): boolean {
  * means it isn't a *singly* linked list, so it's left for later phases.
  */
 function findNextField(node: ObjectValue): string | null {
-  if (!node.attributes) return null
-  const candidates = Object.entries(node.attributes).filter(
-    ([, value]) => isNullPrimitive(value) || (isObject(value) && value.type === node.type),
-  )
-  return candidates.length === 1 ? candidates[0][0] : null
+  const fields = findPointerFields(node)
+  return fields.length === 1 ? fields[0] : null
 }
 
 const MAX_CHAIN_LENGTH = 500
@@ -54,7 +42,7 @@ function walkChain(head: ObjectValue, nextField: string): { nodes: LinkedListNod
   let hasCycle = false
 
   for (;;) {
-    if (!isObject(current) || current.objectId === undefined || !current.attributes) break
+    if (!isObjectValue(current) || current.objectId === undefined || !current.attributes) break
     const objectId: number = current.objectId
     const attributes: Record<string, VariableValue> = current.attributes
 
@@ -73,7 +61,7 @@ function walkChain(head: ObjectValue, nextField: string): { nodes: LinkedListNod
 
     if (nodes.length >= MAX_CHAIN_LENGTH) break
     if (next === undefined) break
-    if (isObject(next) && next.objectId === undefined) {
+    if (isObjectValue(next) && next.objectId === undefined) {
       // The serializer's own cycle guard truncated here (repr "<circular>")
       // before we could see the identity — still real evidence of a cycle.
       hasCycle = next.repr === '<circular>'
@@ -94,7 +82,7 @@ function walkChain(head: ObjectValue, nextField: string): { nodes: LinkedListNod
 export function extractLinkedLists(state: ExecutionState): LinkedListChain[] {
   const scope = activeScope(state)
   const candidates = Object.entries(scope).filter(
-    (entry): entry is [string, ObjectValue] => isObject(entry[1]) && entry[1].attributes !== undefined,
+    (entry): entry is [string, ObjectValue] => isObjectValue(entry[1]) && entry[1].attributes !== undefined,
   )
 
   const chains: LinkedListChain[] = []

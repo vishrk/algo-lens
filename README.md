@@ -9,13 +9,13 @@ more — rendered from an actual execution trace, not a scripted animation.
 
 ## Status
 
-Phase 09: linked lists. Run Reverse Linked List, Merge Two Sorted Lists,
-or Detect Cycle and watch real node chains render as `[1] → [2] → [3] →
-null`, with pointer variables like `head`/`curr`/`prev` labeled at their
-actual position — including a genuine cycle rendered as `↻ (cycle)`.
-Trees, graphs, and other languages land in later phases. See
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the overall design and
-[CONTRIBUTING.md](CONTRIBUTING.md) for the phased development process.
+Phase 10: binary trees. Run an inorder/preorder/postorder traversal, a
+BST search, or maximum depth and watch the real tree — nodes, edges
+labeled `left`/`right`, and the node currently being visited — render as
+you step, including explicit `null` leaves. Graphs and other languages
+land in later phases. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+for the overall design and [CONTRIBUTING.md](CONTRIBUTING.md) for the
+phased development process.
 
 ## Getting started
 

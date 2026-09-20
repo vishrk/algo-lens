@@ -7,6 +7,7 @@ import { DebuggerControls } from './DebuggerControls'
 import { EditorToolbar } from './EditorToolbar'
 import { LinkedListVisualizer } from './LinkedListVisualizer'
 import { TraceSummary } from './TraceSummary'
+import { TreeVisualizer } from './TreeVisualizer'
 import { VariablesPanel } from './VariablesPanel'
 import { EXAMPLES } from '../lib/examples'
 import type { Language } from '../lib/languages'
@@ -87,6 +88,7 @@ export function Workspace() {
           previousState={controller.previousStep?.state ?? null}
         />
         <LinkedListVisualizer state={controller.currentStep?.state ?? null} />
+        <TreeVisualizer state={controller.currentStep?.state ?? null} />
         {trace && <CallTreeView steps={trace.steps} stepIndex={controller.stepIndex} />}
         <div className="flex min-h-0 flex-1">
           <TraceSummary

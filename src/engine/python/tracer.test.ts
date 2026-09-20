@@ -128,4 +128,36 @@ describe('python tracer (real Pyodide execution)', () => {
       repr: '<circular>',
     })
   })
+
+  it('serializes a two-pointer tree node with both children as real fields', () => {
+    const result = trace(
+      'class TreeNode:\n' +
+        '    def __init__(self, val=0, left=None, right=None):\n' +
+        '        self.val = val\n' +
+        '        self.left = left\n' +
+        '        self.right = right\n\n' +
+        'root = TreeNode(2, TreeNode(1), TreeNode(3))\n',
+    )
+
+    expect(result.error).toBeNull()
+    const root = result.steps.at(-1).state.globals.root
+
+    expect(root.type).toBe('TreeNode')
+    expect(Object.keys(root.attributes)).toEqual(['val', 'left', 'right'])
+    expect(root.attributes.left.attributes.val).toEqual({
+      kind: 'primitive',
+      type: 'int',
+      value: 1,
+    })
+    expect(root.attributes.right.attributes.val).toEqual({
+      kind: 'primitive',
+      type: 'int',
+      value: 3,
+    })
+    expect(root.attributes.left.attributes.left).toEqual({
+      kind: 'primitive',
+      type: 'NoneType',
+      value: null,
+    })
+  })
 })

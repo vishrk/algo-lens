@@ -452,4 +452,373 @@ console.log(factorial(5));
 `,
     },
   },
+  {
+    id: 'inorder-traversal',
+    title: 'Binary Tree Inorder Traversal',
+    code: {
+      python: `class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def inorder(node, result):
+    if node is None:
+        return
+    inorder(node.left, result)
+    result.append(node.val)
+    inorder(node.right, result)
+
+
+root = TreeNode(2, TreeNode(1), TreeNode(3))
+output = []
+inorder(root, output)
+print(output)
+`,
+      javascript: `class TreeNode {
+  constructor(val = 0, left = null, right = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function inorder(node, result) {
+  if (node === null) {
+    return;
+  }
+  inorder(node.left, result);
+  result.push(node.val);
+  inorder(node.right, result);
+}
+
+const root = new TreeNode(2, new TreeNode(1), new TreeNode(3));
+const output = [];
+inorder(root, output);
+console.log(output);
+`,
+      typescript: `class TreeNode {
+  val: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+  constructor(val = 0, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function inorder(node: TreeNode | null, result: number[]): void {
+  if (node === null) {
+    return;
+  }
+  inorder(node.left, result);
+  result.push(node.val);
+  inorder(node.right, result);
+}
+
+const root = new TreeNode(2, new TreeNode(1), new TreeNode(3));
+const output: number[] = [];
+inorder(root, output);
+console.log(output);
+`,
+    },
+  },
+  {
+    id: 'preorder-traversal',
+    title: 'Binary Tree Preorder Traversal',
+    code: {
+      python: `class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def preorder(node, result):
+    if node is None:
+        return
+    result.append(node.val)
+    preorder(node.left, result)
+    preorder(node.right, result)
+
+
+root = TreeNode(2, TreeNode(1), TreeNode(3))
+output = []
+preorder(root, output)
+print(output)
+`,
+      javascript: `class TreeNode {
+  constructor(val = 0, left = null, right = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function preorder(node, result) {
+  if (node === null) {
+    return;
+  }
+  result.push(node.val);
+  preorder(node.left, result);
+  preorder(node.right, result);
+}
+
+const root = new TreeNode(2, new TreeNode(1), new TreeNode(3));
+const output = [];
+preorder(root, output);
+console.log(output);
+`,
+      typescript: `class TreeNode {
+  val: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+  constructor(val = 0, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function preorder(node: TreeNode | null, result: number[]): void {
+  if (node === null) {
+    return;
+  }
+  result.push(node.val);
+  preorder(node.left, result);
+  preorder(node.right, result);
+}
+
+const root = new TreeNode(2, new TreeNode(1), new TreeNode(3));
+const output: number[] = [];
+preorder(root, output);
+console.log(output);
+`,
+    },
+  },
+  {
+    id: 'postorder-traversal',
+    title: 'Binary Tree Postorder Traversal',
+    code: {
+      python: `class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def postorder(node, result):
+    if node is None:
+        return
+    postorder(node.left, result)
+    postorder(node.right, result)
+    result.append(node.val)
+
+
+root = TreeNode(2, TreeNode(1), TreeNode(3))
+output = []
+postorder(root, output)
+print(output)
+`,
+      javascript: `class TreeNode {
+  constructor(val = 0, left = null, right = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function postorder(node, result) {
+  if (node === null) {
+    return;
+  }
+  postorder(node.left, result);
+  postorder(node.right, result);
+  result.push(node.val);
+}
+
+const root = new TreeNode(2, new TreeNode(1), new TreeNode(3));
+const output = [];
+postorder(root, output);
+console.log(output);
+`,
+      typescript: `class TreeNode {
+  val: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+  constructor(val = 0, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function postorder(node: TreeNode | null, result: number[]): void {
+  if (node === null) {
+    return;
+  }
+  postorder(node.left, result);
+  postorder(node.right, result);
+  result.push(node.val);
+}
+
+const root = new TreeNode(2, new TreeNode(1), new TreeNode(3));
+const output: number[] = [];
+postorder(root, output);
+console.log(output);
+`,
+    },
+  },
+  {
+    id: 'bst-search',
+    title: 'Binary Search Tree Search',
+    code: {
+      python: `class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def search_bst(node, target):
+    if node is None:
+        return False
+    if node.val == target:
+        return True
+    if target < node.val:
+        return search_bst(node.left, target)
+    return search_bst(node.right, target)
+
+
+root = TreeNode(
+    5,
+    TreeNode(3, TreeNode(1), TreeNode(4)),
+    TreeNode(8, TreeNode(7), TreeNode(9)),
+)
+print(search_bst(root, 7))
+`,
+      javascript: `class TreeNode {
+  constructor(val = 0, left = null, right = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function searchBst(node, target) {
+  if (node === null) {
+    return false;
+  }
+  if (node.val === target) {
+    return true;
+  }
+  if (target < node.val) {
+    return searchBst(node.left, target);
+  }
+  return searchBst(node.right, target);
+}
+
+const root = new TreeNode(
+  5,
+  new TreeNode(3, new TreeNode(1), new TreeNode(4)),
+  new TreeNode(8, new TreeNode(7), new TreeNode(9)),
+);
+console.log(searchBst(root, 7));
+`,
+      typescript: `class TreeNode {
+  val: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+  constructor(val = 0, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function searchBst(node: TreeNode | null, target: number): boolean {
+  if (node === null) {
+    return false;
+  }
+  if (node.val === target) {
+    return true;
+  }
+  if (target < node.val) {
+    return searchBst(node.left, target);
+  }
+  return searchBst(node.right, target);
+}
+
+const root = new TreeNode(
+  5,
+  new TreeNode(3, new TreeNode(1), new TreeNode(4)),
+  new TreeNode(8, new TreeNode(7), new TreeNode(9)),
+);
+console.log(searchBst(root, 7));
+`,
+    },
+  },
+  {
+    id: 'max-depth',
+    title: 'Maximum Depth of Binary Tree',
+    code: {
+      python: `class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def max_depth(node):
+    if node is None:
+        return 0
+    return 1 + max(max_depth(node.left), max_depth(node.right))
+
+
+root = TreeNode(1, TreeNode(2, TreeNode(4)), TreeNode(3))
+print(max_depth(root))
+`,
+      javascript: `class TreeNode {
+  constructor(val = 0, left = null, right = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function maxDepth(node) {
+  if (node === null) {
+    return 0;
+  }
+  return 1 + Math.max(maxDepth(node.left), maxDepth(node.right));
+}
+
+const root = new TreeNode(1, new TreeNode(2, new TreeNode(4)), new TreeNode(3));
+console.log(maxDepth(root));
+`,
+      typescript: `class TreeNode {
+  val: number;
+  left: TreeNode | null;
+  right: TreeNode | null;
+  constructor(val = 0, left: TreeNode | null = null, right: TreeNode | null = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+function maxDepth(node: TreeNode | null): number {
+  if (node === null) {
+    return 0;
+  }
+  return 1 + Math.max(maxDepth(node.left), maxDepth(node.right));
+}
+
+const root = new TreeNode(1, new TreeNode(2, new TreeNode(4)), new TreeNode(3));
+console.log(maxDepth(root));
+`,
+    },
+  },
 ]
